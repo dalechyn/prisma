@@ -80,7 +80,16 @@ export class LibraryEngine extends Engine<undefined> {
 
     const engineType = getClientEngineType(config.generator!)
 
-    if (TARGET_BUILD_TYPE === 'library') {
+    if (TARGET_BUILD_TYPE === 'rn') {
+      // dummy library, should never be called
+      this.libraryLoader = {
+        loadLibrary() {
+          throw new Error(
+            'React Native bindings cannot be loaded from inside this library, import react-native-prisma on user code',
+          )
+        },
+      }
+    } else if (TARGET_BUILD_TYPE === 'library') {
       // for "library" builds, we can use both the wasm and native engines
       if (engineType === ClientEngineType.Wasm) {
         this.libraryLoader = libraryLoader ?? wasmLibraryLoader
